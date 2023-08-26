@@ -28,9 +28,11 @@ The [NREC Person Detection Dataset](https://www.nrec.ri.cmu.edu/solutions/agricu
 Below are the results from the experiment. I will go over each graph and explain what they mean. 
 
 ![image_720](https://github.com/bert0bert/agr![Screenshot 2023-08-25 at 9 46 25 PM](https://github.com/bert0bert/agricultural-automation/assets/141275632/b7562ae4-a3bf-4a48-9a67-52cba9ea42ea)
+
 The purple is meant to show Inference Times and the blue network transfer times. On the left are the first three edge devices, we simply put our inference times into a google sheets, downloaded it and made a graph on Google colab. I will go over how to make this in the "Run my experiment-- Measure inference times at CHI@Edge" portion. Left of these three devices are the four scenarios using GPU capabilites and GPU + Optimization. You can also see we have a scenario where there is and isn't blockage. This is simply us trying to recreate mmWave wireless links in real life as these links can be blocked easily. For this we got the inference time and added it to the two different Network Transfer Times which is done seperately on Google Colab. The Raspberry Pi 4 and the Coral Dev Board with CPU capabilites were the slowest-- taking longer than 40ms, the Cloud GPU with and without blockage are third fastest, followed by Cloud GPU + Optimizations with and without blockage, and the Coral Dev Board with TPU capabilites being the fastest at less than 5 ms. 
 
 ![Screenshot 2023-08-25 at 9 46 25 PM](https://github.com/bert0bert/agricultural-automation/assets/141275632/bd7cba9e-fceb-4070-8111-8ddcdf993947)
+
 This graph represents the network trasnfer times. Specifically in a setting where there are "long blockages" (this will be explained later in the "Run my experiment-- measure network transfer times at KVM@TACC"). The median transfer time was around 4-5ms and in cases where the link was blocked for a long period of tmie the transfer time would go up to 10ms. 
 
 ## Run my experiment
