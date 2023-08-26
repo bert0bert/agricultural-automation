@@ -25,7 +25,8 @@ The [NREC Person Detection Dataset](https://www.nrec.ri.cmu.edu/solutions/agricu
 
 ## Results
 
-![image_720](https://github.com/bert0bert/agricultural-automation/assets/141275632/13b3b507-bf81-48cf-b1b0-11f93fdd6b87)
+![image_720](https://github.com/bert0bert/agr![Screenshot 2023-08-25 at 9 46 25 PM](https://github.com/bert0bert/agricultural-automation/assets/141275632/b7562ae4-a3bf-4a48-9a67-52cba9ea42ea)
+icultural-automation/assets/141275632/13b3b507-bf81-48cf-b1b0-11f93fdd6b87)
 
 
 
