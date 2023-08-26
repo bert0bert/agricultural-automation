@@ -21,10 +21,14 @@ With these two possibilites come tradeoffs, while edge devices are slower when i
 
 
 ### Methodology
-The [NREC Person Detection Dataset](https://www.nrec.ri.cmu.edu/solutions/agriculture/other-agriculture-projects/human-detection-and-tracking.html) best reflects what we're looking for in a dataset which is the ability to detect humans in an agricultural setting. With this dataset I trained a model on Google's [Teachable Machines](https://teachablemachine.withgoogle.com/) a simple way to train a model by Google. I created two classes, one called "human" and the other "no human" and uploaded the appropriate images to each set. With our ML model trained and saved to Google Drive, I then had to find scenarios for Network scenarios in which new 5G technology is in use. For this we chose mmWave link traces, 
-
+The [NREC Person Detection Dataset](https://www.nrec.ri.cmu.edu/solutions/agriculture/other-agriculture-projects/human-detection-and-tracking.html) best reflects what we're looking for in a dataset which is the ability to detect humans in an agricultural setting. With this dataset I trained a model on Google's [Teachable Machines](https://teachablemachine.withgoogle.com/) a simple way to train a model by Google. I created two classes, one called "human" and the other "no human" and uploaded the appropriate images to each set. With our ML model trained and saved to Google Drive, I then had to find scenarios for Network scenarios in which new 5G technology is in use. For this we chose mmWave link traces; I found data already collected from my lab and used this to create Network Transfer Times for my cloud scenarios. The inference devices selected for this experiment are as follows: a Raspberry Pi 4 with CPU capabillities, Google's Coral Dev Board (one scenario using CPU capabilites and the other using TPU capabilities) for our edge scenario; and A GPU (RTX6000) for our cloud scenario. Our cloud scenario has two examples: one with and without optimizations. These optimizations are meant to produce faster inference times. 
 
 ## Results
+
+![image_720](https://github.com/bert0bert/agricultural-automation/assets/141275632/13b3b507-bf81-48cf-b1b0-11f93fdd6b87)
+
+
+
 
 ## Run my experiment
 
