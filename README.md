@@ -4,7 +4,7 @@ This experiment compares the latency between Edge and Cloud computing in an Agri
 
 It should take 2-3 hours to run this experiement.
 
-You can run this experiemnt on the [Chameleon](https://chameleoncloud.org/) testbed. To run this experiment you should already have an account on Chameleon, be part of a project, and have configured keys om CHI@Edge, CHI@UC, and KVM@TACC.
+You can run this experiemnt on the [Chameleon](https://chameleoncloud.org/) testbed. To run this experiment you should already have an account on Chameleon, be part of a project, and have configured keys on CHI@Edge, CHI@UC, and KVM@TACC.
 
 ## Background
 
