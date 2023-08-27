@@ -43,10 +43,12 @@ First make sure you have a lease for a Raspberry Pi 4, you can find this if you 
 
 Once you have a Jupyter Notebook set up you should follow the tutorial, it only takes around 10-15 minutes in total to complete. If you're having trouble finding the lease_id, go back to the Chameleon page where you found if your lease exists, click on lease itself (it should be highlighted in blue) and copy and paste the "Id". Note: "project Id" is something different, do not confuse it for the lease ID. Once you finish the tutorial we are now ready to begin testing images.
 
-Before we go on to the next part of the tutorial, we first need to install our ML model. 
+Before we go on to the next part of the tutorial, we first need to install our ML model. Click on the human_detection_tflite folder and download the contents inside to your computer. 
 
 ### Measure inference time at CHI@Edge
 how to copy models to chi@edge provide test images etc
+
+On Jupyter, go to the folder that says "image_model". In here, we're going to first delete the original model and labels file by left-clicking on it and pressing delete. The model should be called "model.tflite", if it isn't look for any file that ends in ".tflite". Once we deleted those things we can either drag and drop or copy and paste our "human_detection.tflite" ML model and our labels.txt file that we downloaded from this repository. Now that we have these things downloaded we need to change a few things to begin testing. Go to model.py and first change line 13. Where it says "model_path=" in the single quotes write 'human_detection.tflite'. It should look something like this: '''interpreter = tflite.Interpreter(model_path='model.tflite')'''. Next, scroll to the bottom
 
 add folder, name it edge, in folder put basic tflite model edgetpu, text.txt, test images
 
