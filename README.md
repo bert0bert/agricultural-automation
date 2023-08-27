@@ -38,9 +38,12 @@ This graph represents the network trasnfer times. Specifically in a setting wher
 ## Run my experiment
 
 ### Set up resources at CHI@Edge
-first least for raspi4
-set up server
-insteall ml
+
+First make sure you have a lease for a Raspberry Pi 4, you can find this if you go to the GUI for CHI@Edge, click on reservations, and it should be under leases. If not create a reservation for a Raspberry Pi 4. Once you have the lease, open this [link](https://github.com/teaching-on-testbeds/edge-cpu-inference/) to access the Edge inferencing on CPU. This will allow us to set up an experiment on Jupyter using a Raspberry Pi 4 to make inferences. 
+
+Once you have a Jupyter Notebook set up you should follow the tutorial, it only takes around 10-15 minutes in total to complete. If you're having trouble finding the lease_id, go back to the Chameleon page where you found if your lease exists, click on lease itself (it should be highlighted in blue) and copy and paste the "Id". Note: "project Id" is something different, do not confuse it for the lease ID. Once you finish the tutorial we are now ready to begin testing images.
+
+Before we go on to the next part of the tutorial, we first need to install our ML model. 
 
 ### Measure inference time at CHI@Edge
 how to copy models to chi@edge provide test images etc
