@@ -46,16 +46,21 @@ Once you have a Jupyter Notebook set up you should follow the tutorial, it only 
 Before we go on to the next part of the tutorial, we first need to install our ML model. Click on the human_detection_tflite folder and download the contents inside to your computer. 
 
 ### Measure inference time at CHI@Edge
-how to copy models to chi@edge provide test images etc
 
-On Jupyter, go to the folder that says "image_model". In here, we're going to first delete the original model and labels file by left-clicking on it and pressing delete. The model should be called "model.tflite", if it isn't look for any file that ends in ".tflite". Once we deleted those things we can either drag and drop or copy and paste our "human_detection.tflite" ML model and our labels.txt file that we downloaded from this repository. Now that we have these things downloaded we need to change a few things to begin testing. Go to model.py and first change line 13. Where it says "model_path=" in the single quotes write 'human_detection.tflite'. It should look something like this: '''interpreter = tflite.Interpreter(model_path='model.tflite')'''. Next, scroll to the bottom
+On Jupyter, go to the folder that says "image_model". In here, we're going to first delete the original model, labels, and image file by left-clicking on it and pressing delete. The model should be called "model.tflite", if it isn't look for any file that ends in ".tflite". Once we deleted those things we can either drag and drop or copy and paste our "human_detection.tflite" ML model and our labels.txt file that we downloaded from this repository. Also drag and drop the images to the "edge-cpu-inference" folder. Now that we have these things downloaded we need to change a few things to begin testing. Go to model.py and first change line 13. Where it says "model_path=" in the single quotes write 'human_detection.tflite'. It should look something like this: '''interpreter = tflite.Interpreter(model_path='model.tflite')'''. Next, scroll to the bottom where it says "labels[i].split". Make sure inside the parenthesis next to split is empty. Don't delete it, just leave it empty. Finally on line 20 where it says "image_path = 'image_name'". We're going to rename 'image_name' everytime we're doing a different image. (image_path = 'pos_5.png') is an example of what it'll look like. 'pos4.png' would be another possibility. Now that we have these things we're now going to test different images and get different times. 
 
-add folder, name it edge, in folder put basic tflite model edgetpu, text.txt, test images
+You're Jupyter environment should be set up, if it isn't make sure it's all set up. Whenever we test a new image, we begin runing code from the "Transfering files to the container" section. This is to make sure we're sending the right images to our ML model. Before we print our results, in the code above be sure to change the '''image_model/'image_name' ''' to the corresponding image number that you put in the model.py. Now we're ready to see what our model says it predicted and the time it takes to make this prediction. Write this time down with the appropriate images.
+
+Re-do these steps for images 1-10. 
 
 ### Set up resources at CHI@UC
-first lease for rtx6000gpu
-set up server
-install machine learning
+
+First make sure you have a lease for an RTX6000 GPU, you can find this if you go to the GUI for CHI@UC, click on reservations, and it should be under leases. If not create a reservation for a RTX6000 GPU. Once you have the lease, open this [link](https://github.com/teaching-on-testbeds/cloud-gpu-inference) to access the Edge inferencing on CPU. This will allow us to set up an experiment on Jupyter using an RTX6000 to make inferences. 
+
+Once you have a Jupyter Notebook set up you should follow the tutorial, it only takes around 10-15 minutes in total to complete. If you're having trouble finding the lease_id, go back to the Chameleon page where you found if your lease exists, click on lease itself (it should be highlighted in blue) and copy and paste the "Id". Note: "project Id" is something different, do not confuse it for the lease ID. Once you finish the tutorial we are now ready to begin testing images.
+
+Before we go on to the next part of the tutorial, we first need to install our ML model. Click on the human_detection_tflite folder and download the contents inside to your computer. 
+
 
 ### Measure inference time at CHI@UC
 
