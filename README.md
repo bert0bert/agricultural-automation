@@ -43,30 +43,44 @@ First make sure you have a lease for a Raspberry Pi 4, you can find this if you 
 
 Once you have a Jupyter Notebook set up you should follow the tutorial, it only takes around 10-15 minutes in total to complete. If you're having trouble finding the lease_id, go back to the Chameleon page where you found if your lease exists, click on lease itself (it should be highlighted in blue) and copy and paste the "Id". Note: "project Id" is something different, do not confuse it for the lease ID. Once you finish the tutorial we are now ready to begin testing images.
 
-Before we go on to the next part of the tutorial, we first need to install our ML model. Click on the human_detection_tflite folder and download the contents inside to your computer. 
+Before we go on to the next part of the tutorial, we first need to install our ML model. Click on the human_detection_tflite folder and download the contents inside to your computer as well as the test images called "positives_negatives". 
 
 ### Measure inference time at CHI@Edge
 
-On Jupyter, go to the folder that says "image_model". In here, we're going to first delete the original model, labels, and image file by left-clicking on it and pressing delete. The model should be called "model.tflite", if it isn't look for any file that ends in ".tflite". Once we deleted those things we can either drag and drop or copy and paste our "human_detection.tflite" ML model and our labels.txt file that we downloaded from this repository. Also drag and drop the images to the "edge-cpu-inference" folder. Now that we have these things downloaded we need to change a few things to begin testing. Go to model.py and first change line 13. Where it says "model_path=" in the single quotes write 'human_detection.tflite'. It should look something like this: '''interpreter = tflite.Interpreter(model_path='model.tflite')'''. Next, scroll to the bottom where it says "labels[i].split". Make sure inside the parenthesis next to split is empty. Don't delete it, just leave it empty. Finally on line 20 where it says "image_path = 'image_name'". We're going to rename 'image_name' everytime we're doing a different image. (image_path = 'pos_5.png') is an example of what it'll look like. 'pos4.png' would be another possibility. Now that we have these things we're now going to test different images and get different times. 
+On Jupyter, go to the folder that says "image_model". In here, we're going to first delete the original model, labels, and image file by left-clicking on it and pressing delete. The model should be called "model.tflite", if it isn't look for any file that ends in ".tflite". Once we deleted those things we can either drag and drop or copy and paste our "human_detection.tflite" ML model, our labels.txt file, and the test images that we downloaded from this repository (there should be pos1-5 and neg1-5). Now that we have these things downloaded we need to change a few things to begin testing. Go to model.py and first change line 13. Where it says "model_path=" in the single quotes write 'human_detection.tflite'. It should look something like this: '''interpreter = tflite.Interpreter(model_path='model.tflite')'''. Next, scroll to the bottom where it says "labels[i].split". Make sure inside the parenthesis next to split is empty. Don't delete it, just leave it empty. Finally on line 20 where it says "image_path = 'image_name'". We're going to rename 'image_name' everytime we're doing a different image. (image_path = 'pos_5.png') is an example of what it'll look like. 'pos4.png' would be another possibility. Now that we have these things we're now going to test different images and get different times. 
 
-You're Jupyter environment should be set up, if it isn't make sure it's all set up. Whenever we test a new image, we begin runing code from the "Transfering files to the container" section. This is to make sure we're sending the right images to our ML model. Before we print our results, in the code above be sure to change the '''image_model/'image_name' ''' to the corresponding image number that you put in the model.py. Now we're ready to see what our model says it predicted and the time it takes to make this prediction. Write this time down with the appropriate images.
+Your Jupyter environment should be set up, if it isn't make sure it's all set up. Whenever we test a new image, we begin runing code from the "Transfering files to the container" section. This is to make sure we're sending the right images to our ML model. Before we print our results, in the code above be sure to change the '''image_model/'image_name' ''' to the corresponding image number that you put in the model.py. Now we're ready to see what our model says it predicted and the time it takes to make this prediction. Write this time down with the appropriate images.
 
 Re-do these steps for images 1-10. 
 
 ### Set up resources at CHI@UC
 
-First make sure you have a lease for an RTX6000 GPU, you can find this if you go to the GUI for CHI@UC, click on reservations, and it should be under leases. If not create a reservation for a RTX6000 GPU. Once you have the lease, open this [link](https://github.com/teaching-on-testbeds/cloud-gpu-inference) to access the Edge inferencing on CPU. This will allow us to set up an experiment on Jupyter using an RTX6000 to make inferences. 
+First make sure you have a lease for an RTX6000 GPU, you can find this if you go to the GUI for CHI@UC, click on reservations, and it should be under leases. If not create a reservation for a RTX6000 GPU. Once you have the lease, open this [link](https://github.com/teaching-on-testbeds/cloud-gpu-inference) to access the Cloud inferencing on GPU. This will allow us to set up an experiment on Jupyter using an RTX6000 to make inferences. 
 
 Once you have a Jupyter Notebook set up you should follow the tutorial, it only takes around 10-15 minutes in total to complete. If you're having trouble finding the lease_id, go back to the Chameleon page where you found if your lease exists, click on lease itself (it should be highlighted in blue) and copy and paste the "Id". Note: "project Id" is something different, do not confuse it for the lease ID. Once you finish the tutorial we are now ready to begin testing images.
 
-Before we go on to the next part of the tutorial, we first need to install our ML model. Click on the human_detection_tflite folder and download the contents inside to your computer. 
+Before we go on to the next part of the tutorial, we first need to install our ML model. Click on the human_detection_keras folder and download the contents inside to your computer. You should also still have the test images downloaded to your computer. 
 
 
 ### Measure inference time at CHI@UC
 
-how to copy models to chi@edge provide test images etc
+On Jupyter, go to the folder that says "image_model". In here, we're going to first delete the original model, labels, and image file by left-clicking on it and pressing delete. The model should be called "model.h5", if it isn't look for any file that ends in ".h5". Once we deleted those things we can either drag and drop or copy and paste our "keras_model.h5" ML model, our labels.txt file, and the test images that we downloaded from this repository (there should be pos1-5 and neg1-5). Now that we have these things downloaded we need to change a few things to begin testing. 
+In model.py -
+Change model = tf.keras.applications.MobileNetV2(input_shape=INPUT_IMG_SHAPE) to model = tf.keras.saving.load_model('model.h5')
+Change image_path = 'parrot.jpg' to replace with whatever the name of your test image is.
+Change imagenet_labels = np.array(open(url).read().splitlines())[1:] to imagenet_labels = np.array(open('labels.txt').read().splitlines())[1:]
 
-add folder, name it edge, in folder put h5 model, text.txt, test images
+In model-convert.py -
+Change model = tf.keras.applications.MobileNetV2(input_shape=INPUT_IMG_SHAPE) to model = tf.keras.saving.load_model('model.h5')
+
+In model-opt.py -
+Change image_path = 'parrot.jpg' to replace with whatever the name of your test image is.
+Change imagenet_labels = np.array(open(url).read().splitlines())[1:] to imagenet_labels = np.array(open('labels.txt').read().splitlines())[1:]
+you may also have to change the word predictions in top_3 = np.argsort(output["predictions"].numpy().squeeze())[-3:][::-1] and print('{:.6f}'.format(output["predictions"].numpy()[0, i]), ':',  imagenet_labels[i]) to sequential_3
+
+Your Jupyter environment should be set up, if it isn't make sure it's all set up. Whenever we test a new image, we begin runing code from the "Transfering files to the container" section. This is to make sure we're sending the right images to our ML model. Before we print our results, in the code above be sure to change the '''image_model/'image_name' ''' to the corresponding image number that you put in the model.py. Now we're ready to see what our model says it predicted and the time it takes to make this prediction. Write this time down with the appropriate images.
+
+Re-do these steps for images 1-10. 
 
 ### Set up resources at KVM@TACC
 set up stuff
