@@ -65,15 +65,16 @@ Before we go on to the next part of the tutorial, we first need to install our M
 ### Measure inference time at CHI@UC
 
 On Jupyter, go to the folder that says "image_model". In here, we're going to first delete the original model, labels, and image file by left-clicking on it and pressing delete. The model should be called "model.h5", if it isn't look for any file that ends in ".h5". Once we deleted those things we can either drag and drop or copy and paste our "keras_model.h5" ML model, our labels.txt file, and the test images that we downloaded from this repository (there should be pos1-5 and neg1-5). Now that we have these things downloaded we need to change a few things to begin testing. 
-In model.py -
+
+In model.py:
 Change model = tf.keras.applications.MobileNetV2(input_shape=INPUT_IMG_SHAPE) to model = tf.keras.saving.load_model('model.h5')
 Change image_path = 'parrot.jpg' to replace with whatever the name of your test image is.
 Change imagenet_labels = np.array(open(url).read().splitlines())[1:] to imagenet_labels = np.array(open('labels.txt').read().splitlines())[1:]
 
-In model-convert.py -
+In model-convert.py:
 Change model = tf.keras.applications.MobileNetV2(input_shape=INPUT_IMG_SHAPE) to model = tf.keras.saving.load_model('model.h5')
 
-In model-opt.py -
+In model-opt.py:
 Change image_path = 'parrot.jpg' to replace with whatever the name of your test image is.
 Change imagenet_labels = np.array(open(url).read().splitlines())[1:] to imagenet_labels = np.array(open('labels.txt').read().splitlines())[1:]
 you may also have to change the word predictions in top_3 = np.argsort(output["predictions"].numpy().squeeze())[-3:][::-1] and print('{:.6f}'.format(output["predictions"].numpy()[0, i]), ':',  imagenet_labels[i]) to sequential_3
