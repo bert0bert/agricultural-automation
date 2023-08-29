@@ -84,11 +84,30 @@ Your Jupyter environment should be set up, if it isn't make sure it's all set up
 Re-do these steps for images 1-10. 
 
 ### Set up resources at KVM@TACC
-set up stuff
+
+First you must make sure you're able to set up instances at KVM@TACC. If you have access to this we can continue.
+
+Once you're certain you have access to KVM@TACC, open this [link](https://github.com/teaching-on-testbeds/network-emulation) network emulation. This will allow us to set up an experiment on Jupyter and runs us through a quick tutorial on how to use network emulation. 
+
+The tutorial takes around 10-15 minutes to run through, please complete the tutorial before continuing to set up the mmWave Wireless link trace. 
+
 
 ### Measure network transfer times at KVM@TACC
 
-set it up how it is on my computer
+Now that you understand how to use KVM@TACC fairly well, we're going to set up our network to emulate a mmWave wireless link trace. 
+If you'd like to take a look on the data my lab collected, please follow this [link](https://witestlab.poly.edu/blog/tcp-mmwave/) which provides the steps necessary to recreate a mmWave scenario. 
+
+First write the following code into your notebook and run it, this will recreate the mmWave link traces:
+remote_router.run('sudo tc qdisc del dev $(ip route get 10.10.2.100 | grep -oP "(?<=dev )[^ ]+") root')
+remote_router.run('sudo tc qdisc replace dev $(ip route get 10.10.2.100 | grep -oP "(?<=dev )[^ ]+") root handle 1: htb default 3')
+remote_router.run('sudo tc class add dev $(ip route get 10.10.2.100 | grep -oP "(?<=dev )[^ ]+") parent 1: classid 1:3 htb rate 500Mbit')
+remote_router.run('sudo tc qdisc add dev $(ip route get 10.10.2.100 | grep -oP "(?<=dev )[^ ]+") parent 1:3 handle 3: bfifo limit 0.5MB')
+
+Now we have to upload our images to Romeo so they can be sent to Juliet.
+remote_romeo.run("sudo apt update; sudo apt install apache2")
+remote_romeo.run("sudo cp ~/positives/* /var/www/html/")
+
+Running these two blocks of code (seperatley) will upload your images to Romeo. 
 
 
 
