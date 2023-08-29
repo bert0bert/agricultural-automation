@@ -98,10 +98,11 @@ Now that you understand how to use KVM@TACC fairly well, we're going to set up o
 If you'd like to take a look on the data my lab collected, please follow this [link](https://witestlab.poly.edu/blog/tcp-mmwave/) which provides the steps necessary to recreate a mmWave scenario. 
 
 First write the following code into your notebook and run it, this will recreate the mmWave link traces:
-remote_router.run('sudo tc qdisc del dev $(ip route get 10.10.2.100 | grep -oP "(?<=dev )[^ ]+") root')
+
+'''remote_router.run('sudo tc qdisc del dev $(ip route get 10.10.2.100 | grep -oP "(?<=dev )[^ ]+") root')
 remote_router.run('sudo tc qdisc replace dev $(ip route get 10.10.2.100 | grep -oP "(?<=dev )[^ ]+") root handle 1: htb default 3')
 remote_router.run('sudo tc class add dev $(ip route get 10.10.2.100 | grep -oP "(?<=dev )[^ ]+") parent 1: classid 1:3 htb rate 500Mbit')
-remote_router.run('sudo tc qdisc add dev $(ip route get 10.10.2.100 | grep -oP "(?<=dev )[^ ]+") parent 1:3 handle 3: bfifo limit 0.5MB')
+remote_router.run('sudo tc qdisc add dev $(ip route get 10.10.2.100 | grep -oP "(?<=dev )[^ ]+") parent 1:3 handle 3: bfifo limit 0.5MB')'''
 
 Now we have to upload our images to Romeo so they can be sent to Juliet.
 remote_romeo.run("sudo apt update; sudo apt install apache2")
@@ -109,12 +110,27 @@ remote_romeo.run("sudo cp ~/positives/* /var/www/html/")
 
 Running these two blocks of code (seperatley) will upload your images to Romeo. 
 
+Now, in router there should be a text file called "tputvary.sh", if not make one and copy and paste:
+
+'''#!/bin/bash
+
+while IFS=, read -r tput tdiff
+do 
+	tdiff=${tdiff::-1}	
+	#ts= `date +%s.%N`
+	#echo "$ts,$tdiff,$tput"
+	sudo tc class replace dev $(ip route get 10.0.3.1 | grep -oP "(?<=dev )[^ ]+") parent 1: classid 1:3 htb rate "$tput"mbit
+	sleep $tdiff
+done < "$1"-tput.csv'''
+
+*Note: Here we changed "10.0.3.1" ip address with our IP address.  
+
 
 
 ## Notes
 
 ### References
-copy refrences from poster
+Chameleon, NYU Tandon School of Engineering, Center for Advanced Technology in Telecommunications, the Pinkerton Foundation, Center for k12 STEM Outreach Program
 
 ### Acknowledgements
 i'd like to acknowledge support of NYU TANDON, K12 STEM outreach center, The Pinkterton Foundation, and my mentors at the New York State Center for Advanced Technology in Telecommunications: Chandra Shekhar Pandey and Fatih Berkay Sarpkaya
