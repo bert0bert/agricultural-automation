@@ -29,11 +29,11 @@ Below are the results from the experiment. I will go over each graph and explain
 
 ![image_720](https://github.com/bert0bert/agricultural-automation/assets/141275632/d8c4294a-d276-417d-8fcc-24f4c2ded521)
 
-The purple is meant to show Inference Times and the blue network transfer times. On the left are the first three edge devices, we simply put our inference times into a google sheets, downloaded it and made a graph on Google colab. I will go over how to make this in the "Run my experiment-- Measure inference times at CHI@Edge" portion. Left of these three devices are the four scenarios using GPU capabilites and GPU + Optimization. You can also see we have a scenario where there is and isn't blockage. This is simply us trying to recreate mmWave wireless links in real life as these links can be blocked easily. For this we got the inference time and added it to the two different Network Transfer Times which is done seperately on Google Colab. The Raspberry Pi 4 and the Coral Dev Board with CPU capabilites were the slowest-- taking longer than 40ms, the Cloud GPU with and without blockage are third fastest, followed by Cloud GPU + Optimizations with and without blockage, and the Coral Dev Board with TPU capabilites being the fastest at less than 5 ms. 
+The purple is meant to show Inference Times and the blue network transfer times. On the left are the first three edge devices, we simply put our inference times into a google sheets, downloaded it and made a graph on Google colab. Left of these three devices are the four scenarios using GPU capabilites and GPU + Optimization. You can also see we have a scenario where there is and isn't blockage. This is simply us trying to recreate mmWave wireless links in real life as these links can be blocked easily. For this we got the inference time and added it to the two different Network Transfer Times which is done seperately on Google Colab. One network transfer time of 5ms (which is meant to represent no blockage in connection) and the other of 10ms (which is meant to represent a possible long period of blockage in the connection). The Raspberry Pi 4 and the Coral Dev Board with CPU capabilites were the slowest-- taking longer than 40ms, the Cloud GPU with and without blockage are third fastest, followed by Cloud GPU + Optimizations with and without blockage, and the Coral Dev Board with TPU capabilites being the fastest at less than 5 ms. 
 
 ![Screenshot 2023-08-25 at 9 46 25 PM](https://github.com/bert0bert/agricultural-automation/assets/141275632/bd7cba9e-fceb-4070-8111-8ddcdf993947)
 
-This graph represents the network trasnfer times. Specifically in a setting where there are "long blockages" (this will be explained later in the "Run my experiment-- measure network transfer times at KVM@TACC"). The median transfer time was around 4-5ms and in cases where the link was blocked for a long period of tmie the transfer time would go up to 10ms. 
+This graph represents the network trasnfer times. Specifically in a setting where there are "long blockages". Since mmWave wireless links can be blocked, there must be scenarios where the connection must be blocked for a long period of time. This graph represents that example of there being instances of long blockages. The median transfer time was around 4-5ms and in cases where the link was blocked for a long period of tmie the transfer time would go up to 10ms. 
 
 ## Run my experiment
 
@@ -67,17 +67,18 @@ Before we go on to the next part of the tutorial, we first need to install our M
 On Jupyter, go to the folder that says "image_model". In here, we're going to first delete the original model, labels, and image file by left-clicking on it and pressing delete. The model should be called "model.h5", if it isn't look for any file that ends in ".h5". Once we deleted those things we can either drag and drop or copy and paste our "keras_model.h5" ML model, our labels.txt file, and the test images that we downloaded from this repository (there should be pos1-5 and neg1-5). Now that we have these things downloaded we need to change a few things to begin testing. 
 
 In model.py:
+'''
 - Change model = tf.keras.applications.MobileNetV2(input_shape=INPUT_IMG_SHAPE) to model = tf.keras.saving.load_model('model.h5')
 - Change image_path = 'parrot.jpg' to replace with whatever the name of your test image is.
-- Change imagenet_labels = np.array(open(url).read().splitlines())[1:] to imagenet_labels = np.array(open('labels.txt').read().splitlines())[1:]
+- Change imagenet_labels = np.array(open(url).read().splitlines())[1:] to imagenet_labels = np.array(open('labels.txt').read().splitlines())[1:] '''
 
 In model-convert.py:
-- Change model = tf.keras.applications.MobileNetV2(input_shape=INPUT_IMG_SHAPE) to model = tf.keras.saving.load_model('model.h5')
+- ''' Change model = tf.keras.applications.MobileNetV2(input_shape=INPUT_IMG_SHAPE) to model = tf.keras.saving.load_model('model.h5') '''
 
 In model-opt.py:
-- Change image_path = 'parrot.jpg' to replace with whatever the name of your test image is.
+- ''' Change image_path = 'parrot.jpg' to replace with whatever the name of your test image is.
 - Change imagenet_labels = np.array(open(url).read().splitlines())[1:] to imagenet_labels = np.array(open('labels.txt').read().splitlines())[1:]
-- you may also have to change the word predictions in top_3 = np.argsort(output["predictions"].numpy().squeeze())[-3:][::-1] and print('{:.6f}'.format(output["predictions"].numpy()[0, i]), ':', imagenet_labels[i]) to sequential_3
+- you may also have to change the word predictions in top_3 = np.argsort(output["predictions"].numpy().squeeze())[-3:][::-1] and print('{:.6f}'.format(output["predictions"].numpy()[0, i]), ':', imagenet_labels[i]) to sequential_3 '''
 
 Your Jupyter environment should be set up, if it isn't make sure it's all set up. Whenever we test a new image, we begin runing code from the "Transfering files to the container" section. This is to make sure we're sending the right images to our ML model. Before we print our results, in the code above be sure to change the '''image_model/'image_name' ''' to the corresponding image number that you put in the model.py. Now we're ready to see what our model says it predicted and the time it takes to make this prediction. Write this time down with the appropriate images.
 
@@ -94,12 +95,13 @@ The tutorial takes around 10-15 minutes to run through, please complete the tuto
 
 ### Measure network transfer times at KVM@TACC
 
-Now that you understand how to use KVM@TACC fairly well, we're going to set up our network to emulate a mmWave wireless link trace. 
+Now that you understand how to use KVM@TACC, we're going to set up our network to emulate a mmWave wireless link trace. 
 If you'd like to take a look on the data my lab collected, please follow this [link](https://witestlab.poly.edu/blog/tcp-mmwave/) which provides the steps necessary to recreate a mmWave scenario. Only follow the "Set Up Resources" section, the rest will be done here. 
 
 *When configuring your settings in router, make sure you change the IP address to the correct one in the tputvary.sh bash script.
 
 Now we have to upload our images to Romeo so they can be sent to Juliet.
+Run this code on your Jupyter notebook:
 '''remote_romeo.run("sudo apt update; sudo apt install apache2")'''
 
 *In a terminal on your LAPTOP - transfer files to home directory on romeo -
