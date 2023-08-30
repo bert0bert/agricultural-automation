@@ -95,36 +95,34 @@ The tutorial takes around 10-15 minutes to run through, please complete the tuto
 ### Measure network transfer times at KVM@TACC
 
 Now that you understand how to use KVM@TACC fairly well, we're going to set up our network to emulate a mmWave wireless link trace. 
-If you'd like to take a look on the data my lab collected, please follow this [link](https://witestlab.poly.edu/blog/tcp-mmwave/) which provides the steps necessary to recreate a mmWave scenario. 
+If you'd like to take a look on the data my lab collected, please follow this [link](https://witestlab.poly.edu/blog/tcp-mmwave/) which provides the steps necessary to recreate a mmWave scenario. Only follow the "Set Up Resources" section, the rest will be done here. 
 
-First write the following code into your notebook and run it, this will recreate the mmWave link traces:
-
-'''remote_router.run('sudo tc qdisc del dev $(ip route get 10.10.2.100 | grep -oP "(?<=dev )[^ ]+") root')
-remote_router.run('sudo tc qdisc replace dev $(ip route get 10.10.2.100 | grep -oP "(?<=dev )[^ ]+") root handle 1: htb default 3')
-remote_router.run('sudo tc class add dev $(ip route get 10.10.2.100 | grep -oP "(?<=dev )[^ ]+") parent 1: classid 1:3 htb rate 500Mbit')
-remote_router.run('sudo tc qdisc add dev $(ip route get 10.10.2.100 | grep -oP "(?<=dev )[^ ]+") parent 1:3 handle 3: bfifo limit 0.5MB')'''
+*When configuring your settings in router, make sure you change the IP address to the correct one in the tputvary.sh bash script.
 
 Now we have to upload our images to Romeo so they can be sent to Juliet.
-remote_romeo.run("sudo apt update; sudo apt install apache2")
-remote_romeo.run("sudo cp ~/positives/* /var/www/html/")
+'''remote_romeo.run("sudo apt update; sudo apt install apache2")'''
 
-Running these two blocks of code (seperatley) will upload your images to Romeo. 
+*In a terminal on your LAPTOP - transfer files to home directory on romeo -
 
-Now, in router there should be a text file called "tputvary.sh", if not make one and copy and paste:
+''' scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa_chameleon -r  /Users/albertonajera/Desktop/positives cc@129.114.27.1:~/ '''
 
-'''#!/bin/bash
+Once the images are in Romeo, we are now going to begin sending images from Romeo to Juliet through our mmWave configured router. On router we're going to run one of four commands:
+''' bash tputvary.sh sl  
+bash tputvary.sh sb  
+bash tputvary.sh lb  
+bash tputvary.sh mobb '''
 
-while IFS=, read -r tput tdiff
-do 
-	tdiff=${tdiff::-1}	
-	#ts= `date +%s.%N`
-	#echo "$ts,$tdiff,$tput"
-	sudo tc class replace dev $(ip route get 10.0.3.1 | grep -oP "(?<=dev )[^ ]+") parent 1: classid 1:3 htb rate "$tput"mbit
-	sleep $tdiff
-done < "$1"-tput.csv'''
+What these commands do will emmulate a specific network scenario in mmWireless link. sl being static link, sb = short blockage, ls = long blockage, and mobb = mobility. When we run one of these we'll quickly go to juliet and run one of four commands:
+''' curl -so /dev/null -w "%[time_total}\n" http://10.10.1.100/positives_negatives/post.1png?[1-2000000000] &> /dev/stdout 
+> sl-results.txt
+> curl -so /dev/null -w "%[time_total}\n" http://10.10.1.100/positives_negatives/post.1png?[1-2000000000] &> /dev/stdout 
+> sb-results.txt
+> curl -so /dev/null -w "%[time_total}\n" http://10.10.1.100/positives_negatives/post.1png?[1-2000000000] &> /dev/stdout 
+> lb-results.txt
+> curl -so /dev/null -w "%[time_total}\n" http://10.10.1.100/positives_negatives/post.1png?[1-2000000000] &> /dev/stdout 
+> mobb-results.txt ''' 
 
-*Note: Here we changed "10.0.3.1" ip address with our IP address.  
-
+These commands will Send an image (specifically post1.png) back and forth from Romeo to Juliet and time the amount it takes each time. You will run each one with the corresponding mmWave scenario. sl will go with sl, sb with sb, etc. After running the command on Juliet let it run for 110 seconds. Once you finish running the command 
 
 
 ## Notes
