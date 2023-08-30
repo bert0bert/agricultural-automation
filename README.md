@@ -67,17 +67,20 @@ Before we go on to the next part of the tutorial, we first need to install our M
 On Jupyter, go to the folder that says "image_model". In here, we're going to first delete the original model, labels, and image file by left-clicking on it and pressing delete. The model should be called "model.h5", if it isn't look for any file that ends in ".h5". Once we deleted those things we can either drag and drop or copy and paste our "keras_model.h5" ML model, our labels.txt file, and the test images that we downloaded from this repository (there should be pos1-5 and neg1-5). Now that we have these things downloaded we need to change a few things to begin testing. 
 
 In model.py:
-- Change model = tf.keras.applications.MobileNetV2(input_shape=INPUT_IMG_SHAPE) to model = tf.keras.saving.load_model('model.h5')
-- Change image_path = 'parrot.jpg' to replace with whatever the name of your test image is.
-- Change imagenet_labels = np.array(open(url).read().splitlines())[1:] to imagenet_labels = np.array(open('labels.txt').read().splitlines())[1:]
-
+``` linux
+Change model = tf.keras.applications.MobileNetV2(input_shape=INPUT_IMG_SHAPE) to model = tf.keras.saving.load_model('model.h5')
+Change image_path = 'parrot.jpg' to replace with whatever the name of your test image is.
+Change imagenet_labels = np.array(open(url).read().splitlines())[1:] to imagenet_labels = np.array(open('labels.txt').read().splitlines())[1:]
+```
 In model-convert.py:
-- Change model = tf.keras.applications.MobileNetV2(input_shape=INPUT_IMG_SHAPE) to model = tf.keras.saving.load_model('model.h5')
+`Change model = tf.keras.applications.MobileNetV2(input_shape=INPUT_IMG_SHAPE) to model = tf.keras.saving.load_model('model.h5')`
 
 In model-opt.py:
-- Change image_path = 'parrot.jpg' to replace with whatever the name of your test image is.
-- Change imagenet_labels = np.array(open(url).read().splitlines())[1:] to imagenet_labels = np.array(open('labels.txt').read().splitlines())[1:]
-- you may also have to change the word: predictions in top_3 = np.argsort(output["predictions"].numpy().squeeze())[-3:][::-1] and print('{:.6f}'.format(output["predictions"].numpy()[0, i]), ':', imagenet_labels[i]) to sequential_3
+```linux
+Change image_path = 'parrot.jpg' to replace with whatever the name of your test image is
+Change imagenet_labels = np.array(open(url).read().splitlines())[1:] to imagenet_labels = np.array(open('labels.txt').read().splitlines())[1:]
+you may also have to change the word: predictions in top_3 = np.argsort(output["predictions"].numpy().squeeze())[-3:][::-1] and print('{:.6f}'.format(output["predictions"].numpy()[0, i]), ':', imagenet_labels[i]) to sequential_3
+```
 
 Your Jupyter environment should be set up, if it isn't make sure it's all set up. Whenever we test a new image, we begin runing code from the "Transfering files to the container" section. This is to make sure we're sending the right images to our ML model. Before we print our results, in the code above be sure to change the '''image_model/'image_name' ''' to the corresponding image number that you put in the model.py. Now we're ready to see what our model says it predicted and the time it takes to make this prediction. Write this time down with the appropriate images.
 
@@ -101,25 +104,26 @@ If you'd like to take a look on the data my lab collected, please follow this [l
 
 Now we have to upload our images to Romeo so they can be sent to Juliet.
 Run this code on your Jupyter notebook:
-- remote_romeo.run("sudo apt update; sudo apt install apache2")
+`remote_romeo.run("sudo apt update; sudo apt install apache2")`
 
 *In a terminal on your LAPTOP - transfer files to home directory on romeo -
 
-- scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa_chameleon -r  /Users/albertonajera/Desktop/positives cc@129.114.27.1:~/
+`scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa_chameleon -r  /Users/albertonajera/Desktop/positives cc@129.114.27.1:~/`
 
 Once the images are in Romeo, we are now going to begin sending images from Romeo to Juliet through our mmWave configured router. On router we're going to run one of four commands:
-- bash tputvary.sh sl  
-- bash tputvary.sh sb  
-- bash tputvary.sh lb  
-- bash tputvary.sh mobb
-
+```linux
+bash tputvary.sh sl  
+bash tputvary.sh sb  
+bash tputvary.sh lb
+bash tputvary.sh mobb
+```
 What these commands do will emmulate a specific network scenario in mmWireless link. sl being static link, sb = short blockage, ls = long blockage, and mobb = mobility. When we run one of these we'll quickly go to juliet and run one of four commands:
- 
-- curl -so /dev/null -w "%[time_total}\n" http://10.10.1.100/positives_negatives/post.1png?[1-2000000000] &> /dev/stdout sl-results.txt 
-- curl -so /dev/null -w "%[time_total}\n" http://10.10.1.100/positives_negatives/post.1png?[1-2000000000] &> /dev/stdout sb-results.txt
-- curl -so /dev/null -w "%[time_total}\n" http://10.10.1.100/positives_negatives/post.1png?[1-2000000000] &> /dev/stdout lb-results.txt
-- curl -so /dev/null -w "%[time_total}\n" http://10.10.1.100/positives_negatives/post.1png?[1-2000000000] &> /dev/stdout mobb-results.txt
-
+ ```
+curl -so /dev/null -w "%[time_total}\n" http://10.10.1.100/positives_negatives/post.1png?[1-2000000000] &> /dev/stdout sl-results.txt 
+curl -so /dev/null -w "%[time_total}\n" http://10.10.1.100/positives_negatives/post.1png?[1-2000000000] &> /dev/stdout sb-results.txt
+curl -so /dev/null -w "%[time_total}\n" http://10.10.1.100/positives_negatives/post.1png?[1-2000000000] &> /dev/stdout lb-results.txt
+curl -so /dev/null -w "%[time_total}\n" http://10.10.1.100/positives_negatives/post.1png?[1-2000000000] &> /dev/stdout mobb-results.txt
+```
 These commands will Send an image (specifically post1.png) back and forth from Romeo to Juliet and time the amount it takes each time. You will run each one with the corresponding mmWave scenario. sl will go with sl, sb with sb, etc. After running the command on Juliet let it run for 110 seconds. Once you finish running the command the txt files will download to your Jupyter environment. From there you can then download the files to your computer by left clicking on the txt file in your Jupyter notebook and downloading it.
 
 
