@@ -23,31 +23,38 @@ In edge computing, input data (in this case an image) is sent to a machine learn
 
 In cloud computing, the input data acquired by the edge device is sent over a network to a ML model that is located on a cloud server. The time it takes to send that input data to the cloud server is called the *network transfer time*. Then, the ML model makes a prediction (again, requiring some *inference time*), and sends it back to the edge device to take an action (again, incurrent some network transfer time). 
 
-Each of these two possibilities comes with tradeoffs. Edge devices are typically inexpensive, low-resource devices, and so edge computing may have a slower inference time. However, in edge computing, data transfer over a network is not required, eliminating the network transfer time. In cloud computing, the network transfer time may be slow depending on network conditions, but because cloud servers are generally powerful, the inference time is faster. The tradeoff depends on the specific network conditions, the data workload, and the machine learning models and techniques involved. In this experiment, we explore this tradeoff for one specific scenario.
+Each of these two possibilities comes with tradeoffs. Edge devices are typically inexpensive, low-resource devices, and so edge computing may have a slower inference time. However, in edge computing, data transfer over a network is not required, eliminating the network transfer time. In cloud computing, the cloud servers are generally powerful, since the cost of these powerful servers can be shared across many applications. Therefore, the inference time may be very fast. However, the network transfer time may be slow depending on network conditions. 
 
+The best option for a particular setting will depend on the specific network conditions, the data workload, the machine learning models and techniques involved, and cost considerations. In this experiment, we explore this tradeoff for one specific scenario.
 
-### Methodology
+### Experiment Methodology
 
 
 **Measuring Inference Time**: The [NREC Person Detection Dataset](https://www.nrec.ri.cmu.edu/solutions/agriculture/other-agriculture-projects/human-detection-and-tracking.html) is a collection of labeled videos taken in an apple orchard and orange grove, with visible people in a variety of outfits, locations, and times. We used this dataset to train a human detection model on Google's [Teachable Machines](https://teachablemachine.withgoogle.com/), a simple web interface developed by Google for training machine learning models. We specified two classes, one called "human" and one called "no human," and uploaded the appropriate images for each class. Then, we downloaded the trained model in Keras format (for the cloud computing experiment) and in TFLite and TFLite Coral format (for the edge computing experiments). We will measure inference time on different types of devices using these saved models: 
 
 * a Raspberry Pi 4, with no hardware acceleration for ML (on CHI@Edge)
 * a Google Coral Dev Board, with no hardware acceleration *and* with TPU acceleration (using our own devices; these are not yet available on CHI@Edge) 
-* a server with GPU (RTX6000), with "vanilla" TensorFlow and with NVIDIA's TensorRT framework for faster inference on NVIDIA GPUs.
+* a server with GPU (RTX6000), with "vanilla" TensorFlow and with NVIDIA's TensorRT framework for faster inference on NVIDIA GPUs. 
+
+We will repeat each experiment ten times and record the median inference time across trials.
   
-**Measuring network transfer time**: To measure network transfer time in a setting representative of a private 5G network, we used [mmWave link traces](https://witestlab.poly.edu/blog/tcp-mmwave/) that had previously been collected by others in our lab.  These include four network scenarios: a scenario with a stable link (no obstructions in the signal path), short blockages in the signal path (e.g. a person walking through the path), long blockages in the signal path (e.g. a person pausing for several seconds in the signal path), and a scenario with blockages where the receiver is also mobile.
+**Measuring network transfer time**: To measure network transfer time in a setting representative of a private 5G network, we used [mmWave link traces](https://witestlab.poly.edu/blog/tcp-mmwave/) that had previously been collected by others in our lab.  These include four network scenarios: a scenario with a stable link (no obstructions in the signal path), short blockages in the signal path (e.g. a person walking through the path), long blockages in the signal path (e.g. a person pausing for several seconds in the signal path), and a scenario with blockages where the receiver is also mobile.  We used network emulation to "play back" these traces in a controlled network on KVM@TACC, while continuously transferring test samples from the NREC dataset across the network and measuring the time required to transfer each sample. Then, we noted the typical test sample transfer times during intervals of blockage and during intervals of no blockage. 
+
+(Note that we measure inference time and network transfer time separately, but in the cloud computing scenario, the overall response time includes the sum of these two.)
 
 ## Results
 
-Below are the results from the experiment. I will go over each graph and explain what they mean. 
+Our experiment results are shown below:
 
-![image_720](https://github.com/bert0bert/agricultural-automation/assets/141275632/d8c4294a-d276-417d-8fcc-24f4c2ded521)
+![](images/results.png)
 
-The purple is meant to show Inference Times and the blue Network Transfer Times. On the left are the first three edge devices, we simply put our inference times into google sheets, downloaded it, and made a graph on (Google Colab)[https://colab.research.google.com/]. Right of these three devices are the four scenarios using GPU capabilities and GPU + Optimization. You can also see we have a scenario where there is and isn't blockage. This is simply us trying to recreate mmWave wireless links in real life as these links can be blocked. For this we got the inference time and added it to the two different Network Transfer Times which is done separately on Google Colab. One network transfer time of 5ms (which is meant to represent no blockage in connection) and the other of 10ms (which is meant to represent a possible long period of blockage in the connection). The Raspberry Pi 4 and the Coral Dev Board with CPU capabilities were the slowest-- taking longer than 40ms, the Cloud GPU with and without blockage are third fastest, followed by Cloud GPU + Optimizations with and without blockage, and the Coral Dev Board with TPU capabilities being the fastest at less than 5 ms. 
+* The purple bars show the median inference time for each experiment, and the blue bars show the network transfer times. (Network transfer time only applies to the cloud computing scenarios.) 
+* The first three scenarios on the left side show the inference times for three edge computing scenarios, with different edge devices: Raspberry Pi 4 with no hardware acceleration (on CHI@Edge), Google Coral board with no hardware acceleration (our own device), Google Coral board with TPU (our own device).
+* The four scenarios on the right side show the inference times and network transfer times for the server with GPU, both without and with the TensorRT optimizations (denoted by GPU+), and for a network link during an interval of no blockage or blockage.
 
-![Screenshot 2023-08-25 at 9 46 25 PM](https://github.com/bert0bert/agricultural-automation/assets/141275632/bd7cba9e-fceb-4070-8111-8ddcdf993947)
+The two edge computing scenarios without hardware acceleration, the Raspberry Pi 4 and the Coral board without acceleration, had the slowest response times (over 40ms). However, for applications where this response time is acceptable (e.g. very low speed vehicles), this may be a preferred solution depending on cost considerations.  The Coral board with TPU acceleration has the fastest response time, less than 5ms. The cloud computing scenario, especially with the TensorRT optimizations, can achieve fast *inference* times comparable to the Coral TPU board. However, due to the added *network transfer* times required for the cloud scenario (4-5ms during intervals with no blockage but 10ms when someone obstructs the signal path), the total response time may be more than 10ms. 
 
-This graph represents the network transfer times. Specifically in a setting where there are "long blockages''. Since mmWave wireless links can be blocked, there must be scenarios where the connection must be blocked for a long period of time. This graph represents that example of there being instances of long blockages. The median transfer time was around 4-5ms and in cases where the link was blocked for a long period of time the transfer time would go up to 10ms. 
+For applications such as high-speed autonomous agricultural robotics that require a reliably small response time less than 10ms, either a very dense mmWave network (to reduce the probability of blockage) or edge devices with hardware acceleration should be deployed. But, both of these options are substantially more expensive than deploying low-cost edge devices for edge computing.
 
 ## Run my experiment
 
