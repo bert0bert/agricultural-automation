@@ -17,6 +17,8 @@ New technology can help increase productivity/automation in agriculture. The new
 
 Computations can be placed at the edge, or in the cloud. These two paradigms are illustrated below.
 
+![](images/edge-cloud-diagram.svg)
+
 In edge computing, input data (in this case an image) is sent to a machine learning (ML) model that is also located on the edge device. The ML model makes a prediction, and the time to generate this prediction from the input is called the *inference time*. Then, some action may be taken - for example, either to continue moving forward or to stop based on whether or not a human is detected in the vehicle path. 
 
 In cloud computing, the input data acquired by the edge device is sent over a network to a ML model that is located on a cloud server. The time it takes to send that input data to the cloud server is called the *network transfer time*. Then, the ML model makes a prediction (again, requiring some *inference time*), and sends it back to the edge device to take an action (again, incurrent some network transfer time). 
