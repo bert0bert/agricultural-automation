@@ -27,7 +27,15 @@ Each of these two possibilities comes with tradeoffs. Edge devices are typically
 
 
 ### Methodology
-The [NREC Person Detection Dataset](https://www.nrec.ri.cmu.edu/solutions/agriculture/other-agriculture-projects/human-detection-and-tracking.html) best reflects what we're looking for in a dataset which is the ability to detect humans in an agricultural setting. With this dataset I trained a model on Google's [Teachable Machines](https://teachablemachine.withgoogle.com/), a simple way to train a model by Google. I created two classes, one called "human" and the other "no human" and uploaded the appropriate images to each set. With our ML model trained and saved to Google Drive, I then had to find scenarios for Network scenarios in which new 5G technology is in use. For this we chose mmWave link traces; I found data already collected from my lab and used this to create Network Transfer Times for my cloud scenarios. The inference devices selected for this experiment are as follows: a Raspberry Pi 4 with CPU capabilities, Google's Coral Dev Board (one scenario using CPU capabilities and the other using TPU capabilities) for our edge scenario; and A GPU (RTX6000) for our cloud scenario. Our cloud scenario has two examples: one with and without optimizations. These optimizations are meant to produce faster inference times. 
+
+
+**Measuring Inference Time**: The [NREC Person Detection Dataset](https://www.nrec.ri.cmu.edu/solutions/agriculture/other-agriculture-projects/human-detection-and-tracking.html) is a collection of labeled videos taken in an apple orchard and orange grove, with visible people in a variety of outfits, locations, and times. We used this dataset to train a human detection model on Google's [Teachable Machines](https://teachablemachine.withgoogle.com/), a simple web interface developed by Google for training machine learning models. We specified two classes, one called "human" and one called "no human," and uploaded the appropriate images for each class. Then, we downloaded the trained model in Keras format (for the cloud computing experiment) and in TFLite and TFLite Coral format (for the edge computing experiments). We will measure inference time on different types of devices using these saved models: 
+
+* a Raspberry Pi 4, with no hardware acceleration for ML (on CHI@Edge)
+* a Google Coral Dev Board, with no hardware acceleration *and* with TPU acceleration (using our own devices; these are not yet available on CHI@Edge) 
+* a server with GPU (RTX6000), with "vanilla" TensorFlow and with NVIDIA's TensorRT framework for faster inference on NVIDIA GPUs.
+  
+**Measuring network transfer time**: To measure network transfer time in a setting representative of a private 5G network, we used [mmWave link traces](https://witestlab.poly.edu/blog/tcp-mmwave/) that had previously been collected by others in our lab.  These include four network scenarios: a scenario with a stable link (no obstructions in the signal path), short blockages in the signal path (e.g. a person walking through the path), long blockages in the signal path (e.g. a person pausing for several seconds in the signal path), and a scenario with blockages where the receiver is also mobile.
 
 ## Results
 
