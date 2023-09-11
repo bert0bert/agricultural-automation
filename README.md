@@ -1,6 +1,6 @@
 # Evaluating Edge & Cloud Computing for Automation in Agriculture
 
-This experiment compares the latency between Edge and Cloud computing in an Agricultural setting-- specifically in human detection.
+This experiment compares the latency between edge and cloud computing in an agricultural setting - specifically, for human detection by autonomous vehicles in an orchard.
 
 It should take 2-3 hours to run this experiment.
 
@@ -8,16 +8,20 @@ You can run this experiment on the [Chameleon](https://chameleoncloud.org/) test
 
 ## Background
 
-### Future of Agricultural
-New technology can help increase productivity/automation in agriculture. For example, new wireless network technology has the ability to produce ultra fast data transfer speeds within a private 5G network. Robotics and artificial intelligence have the ability to allow humans and robots to work together in an agricultural setting. All these things require computations, but where should these computations be placed? In the edge or in the cloud?
+### Future of agriculture
+
+New technology can help increase productivity/automation in agriculture. The new wireless network technologies that are part of 5G, such as mmWave band communication, can enable ultra fast data transfer speeds within a private 5G network deployed on a farm. Robotics and artificial intelligence can allow humans and robots to work together in an agricultural setting, improving productivity. However, this requires computation, leading to the question of where compute resources should be placed.
 
 
-### Edge vs Cloud
-In edge computing, input data (in this case an image) is sent to a machine learning (ML) model inside the edge device. The ML model then takes time to make a prediction, that time is called "Inference Time". From that prediction, an action is taken. In this case our action would be to continue moving forward or stop to avoid an accident. 
+### Edge vs Cloud Computing
 
-In cloud computing, our input data taken by the edge device is now sent over to a ML model inside a cloud server. The time it takes to send that input data over to our cloud server is called "Network Transfer Time". Our ML model then takes Inference Time to make a prediction and once the prediction is made it's then sent over to our edge device to take an action-- again taking Network Transfer Time. 
+Computations can be placed at the edge, or in the cloud. These two paradigms are illustrated below.
 
-With these two possibilities come tradeoffs, while edge devices are slower when it comes to Inference Time because the devices themselves are low-resource devices-- there is almost little to no Network Transfer Time because data isn't being sent anywhere. In cloud devices, Network Transfer Time may be slow due to pending network conditions, but Inference Time is usually faster because it's a more powerful device. With these possibilities, we have to test which is more efficient.
+In edge computing, input data (in this case an image) is sent to a machine learning (ML) model that is also located on the edge device. The ML model makes a prediction, and the time to generate this prediction from the input is called the *inference time*. Then, some action may be taken - for example, either to continue moving forward or to stop based on whether or not a human is detected in the vehicle path. 
+
+In cloud computing, the input data acquired by the edge device is sent over a network to a ML model that is located on a cloud server. The time it takes to send that input data to the cloud server is called the *network transfer time*. Then, the ML model makes a prediction (again, requiring some *inference time*), and sends it back to the edge device to take an action (again, incurrent some network transfer time). 
+
+Each of these two possibilities comes with tradeoffs. Edge devices are typically inexpensive, low-resource devices, and so edge computing may have a slower inference time. However, in edge computing, data transfer over a network is not required, eliminating the network transfer time. In cloud computing, the network transfer time may be slow depending on network conditions, but because cloud servers are generally powerful, the inference time is faster. The tradeoff depends on the specific network conditions, the data workload, and the machine learning models and techniques involved. In this experiment, we explore this tradeoff for one specific scenario.
 
 
 ### Methodology
